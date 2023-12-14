@@ -1,14 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../lib/constants";
-import PostEditing from "../postEditing";
 import { Link } from "@tanstack/react-router";
-import { Card } from "flowbite-react";
-import { Dropdown, DropdownItem } from "flowbite-react";
 import PlaceBid from "../placeBid";
 import dollarIcon from "../../assets/icons/dollarGreen.png";
 import hrGlassIcon from "../../assets/icons/hourglass.png";
-import CalculateTimeLeft from "../calculateTimeLeft";
 
 export default function FetchListing() {
   const [items, setItems] = useState([]);
