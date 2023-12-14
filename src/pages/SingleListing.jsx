@@ -3,6 +3,8 @@ import { API_URL } from "../lib/constants";
 import ShowWallet from "../components/userInfoHome";
 import PlaceBid from "../components/placeBid";
 import dollarIcon from "../assets/icons/dollarGreen.png";
+import { Carousel } from "flowbite-react";
+import { Link } from "@tanstack/react-router";
 
 export default function ListingDetails() {
   const [details, setDetails] = useState({});
@@ -38,6 +40,37 @@ export default function ListingDetails() {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const calculateTimeLeft = (endsAt) => {
+      const currentDate = new Date();
+      const endDate = new Date(endsAt);
+      const difference = endDate - currentDate;
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / (1000 * 60)) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        return (
+          <span className="text-red-400 dark:text-red-400">
+            This listing has ended!
+          </span>
+        );
+      }
+    };
+
+    const timer = setInterval(() => {
+      setDetails((prevDetails) => ({
+        ...prevDetails,
+        timeLeft: calculateTimeLeft(prevDetails.endsAt),
+      }));
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   const {
@@ -81,7 +114,17 @@ export default function ListingDetails() {
         <div className="flex flex-col">
           {media && (
             <div className="w-ful flex flex-col">
-              <img src={media} alt="" className="h-72 object-fit" />
+              <div className="h-56 sm:h-64 xl:h-80 2xl:h-96">
+                <Carousel slide={false}>
+                  {media.map((item, index) => (
+                    <img
+                      key={index}
+                      src={item}
+                      className="w-full h-full object-cover"
+                    />
+                  ))}
+                </Carousel>
+              </div>
             </div>
           )}
           <div
@@ -120,7 +163,10 @@ export default function ListingDetails() {
               role="right side"
               className="flex flex-col w-full items-center"
             >
-              <div className="flex flex-col items-center">
+              <Link
+                to={`/peerprofile/${seller.name}/?name=${seller.name}`}
+                className="flex flex-col items-center"
+              >
                 <img
                   src={seller.avatar}
                   alt=""
@@ -129,7 +175,7 @@ export default function ListingDetails() {
                 <h1 className=" text-yellow-100 text-sm dark:text-white opacity-80">
                   {seller.name}
                 </h1>
-              </div>
+              </Link>
             </div>
           </div>
           <div className="w-full flex bg-gray-800 px-5 pb-3">
@@ -154,9 +200,12 @@ export default function ListingDetails() {
                     key={index}
                     className="flex flex-col text-yellow-100 opacity-60"
                   >
-                    <p className=" dark:text-gray-400">
+                    <Link
+                      to={`/peerprofile/${bid.bidderName}/?name=${bid.bidderName}`}
+                      className=" dark:text-gray-400"
+                    >
                       {index === bids.length - 1 ? bid.bidderName : null}
-                    </p>
+                    </Link>
                   </div>
                 ))}
               </div>
