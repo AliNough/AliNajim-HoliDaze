@@ -15,7 +15,8 @@
     "flowbite": "^2.2.0",
     "flowbite-react": "^0.7.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.8.4",

@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../lib/constants";
 import { Link } from "@tanstack/react-router";
@@ -12,9 +11,16 @@ export default function FetchListing() {
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [showLimit, setShowLimit] = useState(false);
-  console.log(showLimit);
 
-  // UzI1NiIsInR5cCI
+  const calculateHighestBid = (bids) => {
+    if (bids && bids.length > 0) {
+      return bids.reduce((prevBid, currentBid) =>
+        prevBid.amount > currentBid.amount ? prevBid : currentBid
+      );
+    } else {
+      return { amount: 0, bidderName: "", created: "", id: "" };
+    }
+  };
 
   useEffect(() => {
     const getListing = async () => {
@@ -38,12 +44,12 @@ export default function FetchListing() {
         allListings.sort((a, b) => {
           const dateA = new Date(a.created);
           const dateB = new Date(b.created);
-          return dateB - dateA; // Sort in descending order (newest first)
+          return dateB - dateA;
         });
 
         setItems(allListings);
         console.log(allListings);
-      } catch {
+      } catch (error) {
         setError(error);
       } finally {
         setIsLoading(false);
@@ -90,7 +96,7 @@ export default function FetchListing() {
 
   return (
     <>
-      <div className=" bg-gray-800 flex items-center justify-center">
+      <div className="bg-gray-800 flex items-center justify-center">
         <div className="flex scrollXNone flex-col w-full overflow-y-hidden lg:flex-row lg:flex-wrap lg:w-4/5 items-center gap-1">
           {items.map(
             ({
@@ -103,79 +109,74 @@ export default function FetchListing() {
               bids,
               seller,
               timeLeft,
-            }) => (
-              <div
-                key={id}
-                className="w-11/12 lg:w-1/4 bg-gray-200 bg-opacity-30 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-grow justify-center"
-              >
-                <Link
-                  to={`/singlelisting/${id}/?id=${id}`}
-                  className="flex flex-col w-full"
+            }) => {
+              const highestBid = calculateHighestBid(bids);
+              return (
+                <div
+                  key={id}
+                  className="w-11/12 lg:w-1/4 bg-gray-200 bg-opacity-30 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-grow justify-center"
                 >
-                  <img
-                    className="rounded-t-lg object-cover h-60"
-                    onError="https://picsum.photos/100"
-                    src={media[0]}
-                    alt=""
-                  />
-                  <div className="p-2 grid grid-cols-2 ">
-                    <div role="leftSide" className=" min-w-min">
-                      <h2 className="text-2xl font-bold tracking-tight text-gray-200 dark:text-white">
-                        {title}
-                      </h2>
-                      <p className="text-yellow-200 opacity-60">
-                        {seller.name}
-                      </p>
-                      {tags.length === 0 ? (
-                        <p className="mb-3 font-normal text-gray-200 dark:text-gray-400 opacity-60">
-                          • No tags
+                  <Link
+                    to={`/singlelisting/${id}/?id=${id}`}
+                    className="flex flex-col w-full"
+                  >
+                    <img
+                      className="rounded-t-lg object-cover h-60"
+                      onError="https://picsum.photos/100"
+                      src={media[0]}
+                      alt=""
+                    />
+                    <div className="p-2 grid grid-cols-2">
+                      <div className="min-w-min">
+                        <h2 className="text-2xl font-bold tracking-tight text-gray-200 dark:text-white">
+                          {title}
+                        </h2>
+                        <p className="text-yellow-200 opacity-60">
+                          {seller.name}
                         </p>
-                      ) : (
-                        <div className="flex gap-2 opacity-60">
-                          {tags.map((tag, index) => (
-                            <p
-                              key={index}
-                              className="font-normal text-gray-200 dark:text-gray-400"
-                            >
-                              • {tag}
-                            </p>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    {/* <div role="midle"></div> */}
-                    <div role="rightSide" className="flex flex-col items-start">
-                      <p className="text-gray-200">Bids: {_count.bids}</p>
-                      <div className="flex gap-3 ">
-                        <img
-                          src={hrGlassIcon}
-                          alt=""
-                          className="w-6 object-fill"
-                        />
-                        <p className="text-green-300 text-sm">{timeLeft}</p>
-                      </div>
-                      {/* <CalculateTimeLeft listingId={id} data={items} /> */}
-                      <div role="current Bid ammount" className="flex">
-                        <img
-                          src={dollarIcon}
-                          alt=""
-                          className="mr-3 object-contain"
-                        />
-                        {bids.map((bid, index) => (
-                          <p
-                            key={index}
-                            className="text-gray-200 dark:text-gray-400"
-                          >
-                            {index === bids.length - 1 ? bid.amount : null}
+                        {tags.length === 0 ? (
+                          <p className="mb-3 font-normal text-gray-200 dark:text-gray-400 opacity-60">
+                            • No tags
                           </p>
-                        ))}
+                        ) : (
+                          <div className="flex gap-2 opacity-60">
+                            {tags.map((tag, index) => (
+                              <p
+                                key={index}
+                                className="font-normal text-gray-200 dark:text-gray-400"
+                              >
+                                • {tag}
+                              </p>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <PlaceBid listingId={id} />
+                      <div className="flex flex-col items-start">
+                        <p className="text-gray-200">Bids: {_count.bids}</p>
+                        <div className="flex gap-3">
+                          <img
+                            src={hrGlassIcon}
+                            alt=""
+                            className="w-6 object-fill"
+                          />
+                          <p className="text-green-300 text-sm">{timeLeft}</p>
+                        </div>
+                        <div className="flex">
+                          <img
+                            src={dollarIcon}
+                            alt=""
+                            className="mr-3 object-contain"
+                          />
+                          <p className="text-gray-200 dark:text-gray-400">
+                            {highestBid.amount}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </div>
-            )
+                  </Link>
+                </div>
+              );
+            }
           )}
         </div>
       </div>

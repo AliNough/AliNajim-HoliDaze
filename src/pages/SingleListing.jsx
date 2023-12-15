@@ -11,6 +11,7 @@ export default function ListingDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isUser, setIsUser] = useState(false);
+  const [bidErrorMessage, setBidErrorMessage] = useState("");
 
   const storedName = localStorage.getItem("user_name");
   useEffect(() => {
@@ -101,9 +102,13 @@ export default function ListingDetails() {
     }
   }, [details, storedName]);
 
-  console.log(details);
-
   const formattedCreatedDate = new Date(created).toLocaleString();
+  const highestBid =
+    details.bids && details.bids.length > 0
+      ? details.bids.reduce((prevBid, currentBid) =>
+          prevBid.amount > currentBid.amount ? prevBid : currentBid
+        )
+      : { amount: 0, bidderName: "", created: "", id: "" };
 
   return (
     <>
@@ -111,10 +116,10 @@ export default function ListingDetails() {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center bg-gray-900 ">
           {media && (
-            <div className="w-ful flex flex-col">
-              <div className="h-56 sm:h-64 xl:h-80 2xl:h-96">
+            <div className=" flex  w-full sm:w-3/5 flex-col ">
+              <div className="h-56    xl:h-80 2xl:h-96">
                 <Carousel slide={false}>
                   {media.map((item, index) => (
                     <img
@@ -187,32 +192,29 @@ export default function ListingDetails() {
                     alt=""
                     className="mr-3 object-contain"
                   />
-                  {bids.map((bid, index) => (
-                    <div key={index} className="flex flex-col text-gray-200">
-                      <p className=" text-2xl dark:text-gray-400">
-                        {index === bids.length - 1 ? bid.amount : null}
-                      </p>
-                    </div>
-                  ))}
+                  <p className=" text-2xl dark:text-gray-400 text-yellow-50">
+                    {highestBid.amount}
+                  </p>
                 </div>
-                {bids.map((bid, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col text-yellow-100 opacity-60"
-                  >
-                    <Link
-                      to={`/peerprofile/${bid.bidderName}/?name=${bid.bidderName}`}
-                      className=" dark:text-gray-400"
-                    >
-                      {index === bids.length - 1 ? bid.bidderName : null}
-                    </Link>
-                  </div>
-                ))}
+                <Link
+                  to={`/peerprofile/${highestBid.bidderName}/?name=${highestBid.bidderName}`}
+                  className=" dark:text-gray-400 text-yellow-50"
+                >
+                  {highestBid.bidderName || "No bidder yet"}
+                </Link>
               </div>
               <p className="text-green-300">{timeLeft}</p>
             </div>
             <div className="w-1/2">
-              <PlaceBid listingId={id} />
+              <div>
+                {bidErrorMessage && (
+                  <div className="text-red-500">{bidErrorMessage}</div>
+                )}
+              </div>
+              <PlaceBid
+                listingId={id}
+                onError={(error) => setBidErrorMessage(error)}
+              />
             </div>
           </div>
           {isUser ? (

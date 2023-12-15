@@ -83,7 +83,7 @@ export default function PeerProfileView() {
                     <img
                       src={media[0]}
                       alt="product image"
-                      className="h-48 bg-slate-100"
+                      className="h-48 bg-slate-100 object-cover"
                     />
                   )}
                   <div className=" bg-slate-400">
