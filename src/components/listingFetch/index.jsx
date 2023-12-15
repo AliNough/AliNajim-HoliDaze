@@ -47,7 +47,11 @@ export default function FetchListing() {
           return dateB - dateA;
         });
 
-        setItems(allListings);
+        const filteredPosts = allListings.filter((item) => {
+          return item.title.toLowerCase().includes(searchInput.toLowerCase());
+        });
+
+        setItems(filteredPosts);
         console.log(allListings);
       } catch (error) {
         setError(error);
@@ -56,7 +60,7 @@ export default function FetchListing() {
       }
     };
     getListing();
-  }, []);
+  }, [searchInput]);
 
   useEffect(() => {
     const calculateTimeLeft = (endsAt) => {
@@ -94,10 +98,22 @@ export default function FetchListing() {
     return () => clearInterval(timer);
   }, []);
 
+  const handleOnSearch = async (srchInp) => {
+    setSearchInput(srchInp);
+  };
+
   return (
     <>
       <div className="bg-gray-800 flex items-center justify-center">
         <div className="flex scrollXNone flex-col w-full overflow-y-hidden lg:flex-row lg:flex-wrap lg:w-4/5 items-center gap-1">
+          <div className="py-2">
+            <input
+              type="search"
+              placeholder="search"
+              onKeyUp={(event) => handleOnSearch(event.target.value)}
+              className="bg-gray-700 dark:bg-gray-800 border border-gray- rounded-sm"
+            />
+          </div>
           {items.map(
             ({
               id,
