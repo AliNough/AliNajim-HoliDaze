@@ -104,16 +104,16 @@ export default function FetchListing() {
 
   return (
     <>
+      <div className="py-2 px-3 w-full bg-gray-800 flex justify-end">
+        <input
+          type="search"
+          placeholder="search"
+          onKeyUp={(event) => handleOnSearch(event.target.value)}
+          className="bg-gray-700 dark:bg-gray-800 border border-gray- rounded-sm"
+        />
+      </div>
       <div className="bg-gray-800 flex items-center justify-center">
         <div className="flex scrollXNone flex-col w-full overflow-y-hidden lg:flex-row lg:flex-wrap lg:w-4/5 items-center gap-1">
-          <div className="py-2">
-            <input
-              type="search"
-              placeholder="search"
-              onKeyUp={(event) => handleOnSearch(event.target.value)}
-              className="bg-gray-700 dark:bg-gray-800 border border-gray- rounded-sm"
-            />
-          </div>
           {items.map(
             ({
               id,

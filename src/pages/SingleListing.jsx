@@ -5,6 +5,8 @@ import PlaceBid from "../components/placeBid";
 import dollarIcon from "../assets/icons/dollarGreen.png";
 import { Carousel } from "flowbite-react";
 import { Link } from "@tanstack/react-router";
+import { Dropdown } from "flowbite-react";
+import punkIcon from "../assets/icons/more.png";
 
 export default function ListingDetails() {
   const [details, setDetails] = useState({});
@@ -168,6 +170,28 @@ export default function ListingDetails() {
               role="right side"
               className="flex flex-col w-full items-center"
             >
+              {isUser ? (
+                <div className="pb-2">
+                  <Dropdown
+                    renderTrigger={() => (
+                      <img
+                        src={punkIcon}
+                        alt=""
+                        className="w-12 h-12  invert"
+                      />
+                    )}
+                    dismissOnClick={false}
+                  >
+                    <Dropdown.Item className=" ">Edit</Dropdown.Item>
+                    <Dropdown.Item className="bg-red-200 text-red-900">
+                      Delete
+                    </Dropdown.Item>
+                  </Dropdown>
+                </div>
+              ) : (
+                <div></div>
+              )}
+
               <Link
                 to={`/peerprofile/${seller.name}/?name=${seller.name}`}
                 className="flex flex-col items-center"
@@ -217,13 +241,6 @@ export default function ListingDetails() {
               />
             </div>
           </div>
-          {isUser ? (
-            <button className="text-yellow-50 border bg-gray-700 py-3">
-              Edit listing
-            </button>
-          ) : (
-            <div></div>
-          )}
         </div>
       )}
     </>
