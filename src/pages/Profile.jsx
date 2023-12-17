@@ -5,8 +5,6 @@ import { API_URL } from "../lib/constants";
 import { Link } from "@tanstack/react-router";
 import { Spinner } from "flowbite-react";
 import { Tabs } from "flowbite-react";
-import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
-import { MdDashboard } from "react-icons/md";
 export default function ProfilePage() {
   const [profile, setProfile] = useState([]);
   const [userListing, setUserListing] = useState([]);
@@ -204,7 +202,8 @@ export default function ProfilePage() {
                   active
                   title="Listings"
                   icon={""}
-                  className="flex flex-col bg-white focus:ring-red-500 gap-1 active:bg-yellow-200"
+                  style="active"
+                  className="flex flex-col bg-red-600 focus:ring-red-500 gap-1 active:bg-yellow-200"
                 >
                   {userListing.map(({ id, title, media }) => (
                     <Link
