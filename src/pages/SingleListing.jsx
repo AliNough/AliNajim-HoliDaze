@@ -3,12 +3,17 @@ import { API_URL } from "../lib/constants";
 import ShowWallet from "../components/userInfoHome";
 import PlaceBid from "../components/placeBid";
 import dollarIcon from "../assets/icons/dollarGreen.png";
+import { Carousel } from "flowbite-react";
+import { Link } from "@tanstack/react-router";
+import { Dropdown } from "flowbite-react";
+import punkIcon from "../assets/icons/more.png";
 
 export default function ListingDetails() {
   const [details, setDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isUser, setIsUser] = useState(false);
+  const [bidErrorMessage, setBidErrorMessage] = useState("");
 
   const storedName = localStorage.getItem("user_name");
   useEffect(() => {
@@ -40,6 +45,37 @@ export default function ListingDetails() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const calculateTimeLeft = (endsAt) => {
+      const currentDate = new Date();
+      const endDate = new Date(endsAt);
+      const difference = endDate - currentDate;
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / (1000 * 60)) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        return (
+          <span className="text-red-400 dark:text-red-400">
+            This listing has ended!
+          </span>
+        );
+      }
+    };
+
+    const timer = setInterval(() => {
+      setDetails((prevDetails) => ({
+        ...prevDetails,
+        timeLeft: calculateTimeLeft(prevDetails.endsAt),
+      }));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const {
     created,
     description,
@@ -68,9 +104,13 @@ export default function ListingDetails() {
     }
   }, [details, storedName]);
 
-  console.log(details);
-
   const formattedCreatedDate = new Date(created).toLocaleString();
+  const highestBid =
+    details.bids && details.bids.length > 0
+      ? details.bids.reduce((prevBid, currentBid) =>
+          prevBid.amount > currentBid.amount ? prevBid : currentBid
+        )
+      : { amount: 0, bidderName: "", created: "", id: "" };
 
   return (
     <>
@@ -78,10 +118,20 @@ export default function ListingDetails() {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center bg-gray-900 ">
           {media && (
-            <div className="w-ful flex flex-col">
-              <img src={media} alt="" className="h-72 object-fit" />
+            <div className=" flex  w-full sm:w-3/5 flex-col ">
+              <div className="h-56    xl:h-80 2xl:h-96">
+                <Carousel slide={false}>
+                  {media.map((item, index) => (
+                    <img
+                      key={index}
+                      src={item}
+                      className="w-full h-full object-cover"
+                    />
+                  ))}
+                </Carousel>
+              </div>
             </div>
           )}
           <div
@@ -120,7 +170,32 @@ export default function ListingDetails() {
               role="right side"
               className="flex flex-col w-full items-center"
             >
-              <div className="flex flex-col items-center">
+              {isUser ? (
+                <div className="pb-2">
+                  <Dropdown
+                    renderTrigger={() => (
+                      <img
+                        src={punkIcon}
+                        alt=""
+                        className="w-12 h-12  invert"
+                      />
+                    )}
+                    dismissOnClick={false}
+                  >
+                    <Dropdown.Item className=" ">Edit</Dropdown.Item>
+                    <Dropdown.Item className="bg-red-200 text-red-900">
+                      Delete
+                    </Dropdown.Item>
+                  </Dropdown>
+                </div>
+              ) : (
+                <div></div>
+              )}
+
+              <Link
+                to={`/peerprofile/${seller.name}/?name=${seller.name}`}
+                className="flex flex-col items-center"
+              >
                 <img
                   src={seller.avatar}
                   alt=""
@@ -129,7 +204,7 @@ export default function ListingDetails() {
                 <h1 className=" text-yellow-100 text-sm dark:text-white opacity-80">
                   {seller.name}
                 </h1>
-              </div>
+              </Link>
             </div>
           </div>
           <div className="w-full flex bg-gray-800 px-5 pb-3">
@@ -141,38 +216,31 @@ export default function ListingDetails() {
                     alt=""
                     className="mr-3 object-contain"
                   />
-                  {bids.map((bid, index) => (
-                    <div key={index} className="flex flex-col text-gray-200">
-                      <p className=" text-2xl dark:text-gray-400">
-                        {index === bids.length - 1 ? bid.amount : null}
-                      </p>
-                    </div>
-                  ))}
+                  <p className=" text-2xl dark:text-gray-400 text-yellow-50">
+                    {highestBid.amount}
+                  </p>
                 </div>
-                {bids.map((bid, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col text-yellow-100 opacity-60"
-                  >
-                    <p className=" dark:text-gray-400">
-                      {index === bids.length - 1 ? bid.bidderName : null}
-                    </p>
-                  </div>
-                ))}
+                <Link
+                  to={`/peerprofile/${highestBid.bidderName}/?name=${highestBid.bidderName}`}
+                  className=" dark:text-gray-400 text-yellow-50"
+                >
+                  {highestBid.bidderName || "No bidder yet"}
+                </Link>
               </div>
               <p className="text-green-300">{timeLeft}</p>
             </div>
             <div className="w-1/2">
-              <PlaceBid listingId={id} />
+              <div>
+                {bidErrorMessage && (
+                  <div className="text-red-500">{bidErrorMessage}</div>
+                )}
+              </div>
+              <PlaceBid
+                listingId={id}
+                onError={(error) => setBidErrorMessage(error)}
+              />
             </div>
           </div>
-          {isUser ? (
-            <button className="text-yellow-50 border bg-gray-700 py-3">
-              Edit listing
-            </button>
-          ) : (
-            <div></div>
-          )}
         </div>
       )}
     </>

@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="h-24 p-6 text-xl text-center bg-blue-500">
+    <div className="h-24 p-6 text-xl text-center bg-gray-900">
       <a
         href="#"
         className="text-sm font-light text-center text-white hover:underline"

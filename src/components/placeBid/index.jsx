@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { PostShape } from "../../lib/types";
 import { API_URL } from "../../lib/constants";
-import SNDcoin from "../../assets/sounds/Coins_272.wav";
 import SNDcashReister from "../../assets/sounds/CashRegister_S08OF.40.wav";
 import SNDonErr from "../../assets/sounds/ESM_Fantasy_Game_Crafting_UI_Tab_Button_8_Spell_Cast_Click_Switch_Lever_Latch.wav";
 
-const sounds = [];
-
-export default function QuantitySelector({ listingId = "no id" }) {
+export default function QuantitySelector({ listingId = "no id", onError }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [quantity, setQuantity] = useState(""); // State to hold the quantity value
   const [error, setError] = useState(""); // State to hold the error message
@@ -69,25 +66,28 @@ export default function QuantitySelector({ listingId = "no id" }) {
         const audio = new Audio(SNDcashReister);
         audio.volume = 0.5;
         audio.play();
+
         return (
           <>
-            <p className="text-green-300 text-sm">{json.message}</p>
+            <p className="text-green-300 text-sm">{json}</p>
           </>
         );
       } else {
         const audio = new Audio(SNDonErr);
         audio.volume = 0.5;
         audio.play();
+        setError(json.errors.message);
+        onError(json.errors.message);
 
         return (
           <>
-            <p className="text-red-300 text-sm">{json.message}</p>
+            <p className="text-red-300 text-sm">{json.errors.message}</p>
           </>
         );
       }
     } catch (error) {
       setError(error);
-      console.warn("Couldn't update post", error);
+      console.warn("Couldn't place bid", error);
     }
   }
 

@@ -66,8 +66,8 @@ function RegisterForm() {
   };
 
   return (
-    <div className="relative bg-gray-800 flex flex-col min-h-screen py-1 overflow-hidden">
-      <div className="w-full max-w-xl p-5 border-2 border-yellow-500 py-10 rounded-xl">
+    <div className="relative bg-gray-800 flex flex-col items-center min-h-screen py-1 overflow-hidden ">
+      <div className="w-full max-w-xl mt-4 p-5 bg-gray-700 py-10 rounded-xl">
         <h1 className="text-3xl font-normal text-center text-yellow-50">
           Register
         </h1>
@@ -90,7 +90,7 @@ function RegisterForm() {
               placeholder="Name"
               value={formData.name}
               onChange={handleChange}
-              className="block w-full px-4 py-2 mt-2 text-black bg-white border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+              className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
               required
             />
           </div>
@@ -101,7 +101,7 @@ function RegisterForm() {
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
-              className="block w-full px-4 py-2 mt-2 text-blue-500 bg-white border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+              className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
               required
             />
           </div>
@@ -112,7 +112,7 @@ function RegisterForm() {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="block w-full px-4 py-2 mt-2 text-blue-500 bg-white border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+              className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
               required
             />
           </div>
