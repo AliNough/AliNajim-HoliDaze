@@ -6,6 +6,7 @@ import ProfilesPage from "./pages/Profiles";
 import ProfilePage from "./pages/Profile";
 import AddNewListing from "./pages/AddListing";
 import SingleListingPage from "./pages/SingleListing";
+import PeerProfilePage from "./pages/PeerProfile";
 
 import Root from "./App";
 
@@ -63,6 +64,12 @@ const singleListingRoute = new Route({
   component: SingleListingPage,
 });
 
+const PeerProfileRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/PeerProfile/$profileId",
+  component: PeerProfilePage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
@@ -72,6 +79,7 @@ const routeTree = rootRoute.addChildren([
   registerRoute,
   addListingRoute,
   singleListingRoute,
+  PeerProfileRoute,
 ]);
 
 export const router = new Router({ routeTree });

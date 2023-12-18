@@ -1,7 +1,10 @@
 import { API_URL } from "../lib/constants";
+import { useNavigate } from "@tanstack/react-router";
+
 // import { useEffect, useState } from "react";
 
 export default function AddNewListing() {
+  const navigate = useNavigate();
   //   const userName = localStorage.getItem("user_name");
 
   const submitHandler = async (e) => {
@@ -35,8 +38,17 @@ export default function AddNewListing() {
         media: mediaArray,
       }),
     });
-    const data = await req.json();
-    console.log(data);
+
+    if (req.status === 201) {
+      const data = await req.json();
+      navigate(`/singlelisting/${data.id}/?id=${data.id}`);
+      form.reset();
+      console.log(data);
+      alert("Listing Created");
+    } else {
+      const data = await req.json();
+      console.log(data);
+    }
   };
 
   return (

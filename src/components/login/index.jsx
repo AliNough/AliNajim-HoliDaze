@@ -49,8 +49,8 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="relative bg-gray-800 flex flex-col min-h-screen p-5 overflow-hidden">
-        <div className="w-full max-w-xl p-5 m-aut border-2 border-yellow-50 py-10 rounded-xl">
+      <div className="relative bg-gray-800 flex flex-col items-center min-h-screen py-1 overflow-hidden ">
+        <div className="w-full max-w-xl mt-4 p-5 bg-gray-700 py-10 rounded-xl">
           <h1 className="text-3xl font-normal text-center text-yellow-50">
             Login
           </h1>
@@ -65,7 +65,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="Email"
-                className="block w-full px-4 py-2 mt-2 text-black bg-white border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+                className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -75,7 +75,7 @@ export default function LoginPage() {
               <input
                 type="password"
                 placeholder="Password"
-                className="block w-full px-4 py-2 mt-2 text-blue-500 bg-white border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+                className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -97,7 +97,7 @@ export default function LoginPage() {
           >
             Forgot your password?
           </a>
-          <p className="mt-8 text-xs font-light text-center text-gray-700">
+          <p className="mt-8 text-xs font-light text-center text-gray-400">
             Don´t have an account?{" "}
             <Link
               to="/register"
