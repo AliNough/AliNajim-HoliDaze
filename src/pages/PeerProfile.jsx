@@ -113,11 +113,18 @@ export default function PeerProfileView() {
                       key={id}
                       className="flex flex-col py-1"
                     >
-                      <img
-                        src={media[0]}
-                        alt="product image"
-                        className="h-48 bg-slate-100 object-cover"
-                      />
+                      {media ? (
+                        <img
+                          src={media[0]}
+                          alt="product image"
+                          className="h-48 bg-slate-100 object-cover"
+                        />
+                      ) : (
+                        <div className=" h-48 bg-slate-100 opacity-30 flex justify-center items-center">
+                          <p>No media found</p>
+                        </div>
+                      )}
+
                       <div className=" bg-slate-400">
                         <h2 className="text-yellow-50 pt-3 text-lg font-ligh">
                           {title}
