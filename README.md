@@ -2,9 +2,9 @@
 # Report for FED2 Semester Project - HoliDaze
 
 
-- [Brief](https://fed-vocational-astro-course.vercel.app/en/semester-project-2/brief)
-- [Design](https://www.figma.com/file/7OvbYcHJlwXwIhIi2av17v/BidVista?type=design&node-id=24%3A8136&mode=design&t=fi9ZsqslvjvGWAs5-1)
-- [Production deploy](https://bidvista.netlify.app/)
+- [Brief]([https://fed-vocational-astro-course.vercel.app/en/semester-project-2/brief](https://fed-vocational-astro-course.vercel.app/en/project-exam-2/brief))
+- [Design](https://www.figma.com/design/YQioPucmv2g1OMmOtAb0o0/Untitled?node-id=0-1&t=C7QSvDLtakMHNL0y-1)
+- [Production deploy](https://wonderful-stroopwafel-bcfc69.netlify.app/)
 
 
 ## Design
