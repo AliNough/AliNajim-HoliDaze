@@ -23,7 +23,7 @@ export default function Navigation() {
           <div className="flex items-center justify-between  h-16">
             <div className="flex-shrink-0">
               <Link to="/" className="text-2xl font-normal text-yellow-100 ">
-                BidVista
+                HoliDaze
               </Link>
             </div>
             <div className="hidden space-x-10 lg:flex">

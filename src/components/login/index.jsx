@@ -15,7 +15,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/auction/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,11 +26,10 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         console.log("Response Data:", data);
-
-        if (data && data.accessToken) {
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("user_email", data.email);
-          localStorage.setItem("user_name", data.name);
+        if (data.data && data.data.accessToken) {
+          localStorage.setItem("accessToken", data.data.accessToken);
+          localStorage.setItem("user_email", data.data.email);
+          localStorage.setItem("user_name", data.data.name);
         }
         setSuccess("Login successful.");
         setTimeout(() => {

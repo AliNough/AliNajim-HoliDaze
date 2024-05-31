@@ -1,36 +1,78 @@
 import { useEffect, useState } from "react";
-// import FetchListing from "../components/listingFetch";
-import { API_URL } from "../lib/constants";
-// import walletIcon from "../assets/icons/wallet.png";
+import { API_URL, API_KEY } from "../lib/constants";
 import { Link } from "@tanstack/react-router";
-import { Spinner } from "flowbite-react";
-import { Tabs } from "flowbite-react";
+import { Spinner, Tabs } from "flowbite-react";
+
 export default function ProfilePage() {
-  const [profile, setProfile] = useState([]);
-  const [userListing, setUserListing] = useState([]);
+  const [profile, setProfile] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [profileBookings, setProfileBookings] = useState([]);
+  const [venues, setVenues] = useState({});
 
   useEffect(() => {
     const getProfile = async () => {
       try {
         const storedName = localStorage.getItem("user_name");
-        const url = new URL(`${API_URL}/auction/profiles/${storedName}`);
-        url.searchParams.append("_listings", "true");
+        const url = new URL(`${API_URL}/holidaze/profiles/${storedName}`);
+        url.searchParams.append("_venues", "true");
+        url.searchParams.append("_bookings", "true");
 
         const response = await fetch(url.href, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "X-Noroff-API-Key": API_KEY,
           },
         });
+        const userBookingsResponse = await fetch(
+          `${API_URL}/holidaze/profiles/${storedName}/bookings`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              "X-Noroff-API-Key": API_KEY,
+            },
+          }
+        );
 
         const allData = await response.json();
+        const bookingsData = await userBookingsResponse.json();
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile data");
+        }
 
-        setProfile(allData);
-        setUserListing(allData.listings);
-        console.log(allData);
+        // Fetch venue details for each booking
+        const fetchVenueDetails = async (booking) => {
+          const venueResponse = await fetch(
+            `${API_URL}/holidaze/venues/${booking.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                "X-Noroff-API-Key": API_KEY,
+              },
+            }
+          );
+          return venueResponse.json();
+        };
+
+        const venuesData = await Promise.all(
+          bookingsData.data.map((booking) =>
+            fetchVenueDetails(booking).then((venueData) => ({
+              bookingId: booking.id,
+              venue: venueData.data,
+            }))
+          )
+        );
+
+        const venuesMap = {};
+        venuesData.forEach((venueData) => {
+          venuesMap[venueData.bookingId] = venueData.venue;
+        });
+
+        setVenues(venuesMap);
+        setProfileBookings(bookingsData.data);
+        setProfile(allData.data);
       } catch (error) {
         setError(error);
         console.log(error);
@@ -38,6 +80,7 @@ export default function ProfilePage() {
         setIsLoading(false);
       }
     };
+
     getProfile();
   }, []);
 
@@ -45,26 +88,40 @@ export default function ProfilePage() {
     event.preventDefault();
     const storedName = localStorage.getItem("user_name");
 
-    const avatarURL = event.target.avatar.value;
+    const avatarURL = event.target.avatar.value || profile.avatar.url;
+    const avatarAlt = "Profile picture";
+    const bio = event.target.bio.value || profile.bio;
+    const bannerURL = event.target.banner.value || profile.banner.url;
+    const bannerAlt = "Banner image";
+    const venueManager = profile.venueManager;
 
-    console.log("mmm", event.target.avatar.value);
     try {
-      const url = new URL(`${API_URL}/auction/profiles/${storedName}/media`);
+      const url = new URL(`${API_URL}/holidaze/profiles/${storedName}`);
       const response = await fetch(url.href, {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "X-Noroff-API-Key": API_KEY,
         },
-        body: JSON.stringify({ avatar: avatarURL }),
-        // Set the FormData object as the body
+        body: JSON.stringify({
+          bio: bio,
+          avatar: {
+            url: avatarURL,
+            alt: avatarAlt,
+          },
+          banner: {
+            url: bannerURL,
+            alt: bannerAlt,
+          },
+          venueManager: venueManager,
+        }),
       });
 
       if (response.ok) {
         const updatedProfileData = await response.json();
         setProfile(updatedProfileData);
         setSuccessMessage("Profile Updated!");
-        console.log(updatedProfileData);
         setIsEditing(false);
 
         setTimeout(() => {
@@ -86,9 +143,12 @@ export default function ProfilePage() {
     setIsEditing(true);
   };
 
-  const { credits, name, avatar, wins } = profile;
-  console.log(userListing);
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
+  const { name, avatar, banner, bio } = profile;
   return (
     <>
       <div className="w-full flex flex-col items-center bg-gray-800 py-3 gap-3 transition-all">
@@ -109,22 +169,36 @@ export default function ProfilePage() {
               <div>
                 <div className="flex flex-col items-center">
                   <img
-                    src={avatar}
-                    alt="profile picture"
+                    src={avatar?.url}
+                    alt={avatar?.alt || "profile picture"}
                     className="h-48 object-cover"
                   />
-
                   <form
-                    action=""
                     onSubmit={editProfile}
                     className="flex flex-col gap-3 my-3"
                   >
                     <input
                       type="text"
-                      required
                       id="avatar"
                       name="avatar"
-                      placeholder="Image"
+                      placeholder="Avatar Image URL"
+                      defaultValue={avatar?.url}
+                      className="bg-gray-800 text-yellow-50 h-9 dark:text-gray-40 rounded-md"
+                    />
+                    <input
+                      type="text"
+                      id="bio"
+                      name="bio"
+                      placeholder="Bio"
+                      defaultValue={bio}
+                      className="bg-gray-800 text-yellow-50 h-9 dark:text-gray-40 rounded-md"
+                    />
+                    <input
+                      type="text"
+                      id="banner"
+                      name="banner"
+                      placeholder="Banner Image URL"
+                      defaultValue={banner?.url}
                       className="bg-gray-800 text-yellow-50 h-9 dark:text-gray-40 rounded-md"
                     />
                     <input
@@ -132,63 +206,43 @@ export default function ProfilePage() {
                       className="bg-yellow-400 py-2 rounded-sm"
                       value="Save"
                     />
-
                     <button
-                      onClick={() => setIsEditing(false)} // Use function reference
+                      onClick={() => setIsEditing(false)}
                       className="border-b border-red-300 text-red-500"
                     >
                       Cancel
                     </button>
                   </form>
                 </div>
-                <div className="flex flex-col items-center">
-                  <h2 className="text-yellow-50 bg-gray-600 pt-1 px-3 text-lg font-ligh rounded-md">
-                    Wallet: {credits} kr
-                  </h2>
-                </div>
               </div>
             ) : (
               <div>
                 <div className="flex flex-col items-center">
                   <img
-                    src={avatar}
-                    alt="profile picture"
+                    src={avatar?.url}
+                    alt={avatar?.alt || "profile picture"}
                     className="h-40 w-40 object-cover border border-yellow-200 rounded-full"
                   />
-                  <h2 className="text-yellow-50 text-lg font-ligh">{name}</h2>
-                </div>
-                <div className="flex flex-col items-center">
-                  <h2 className="text-yellow-50 bg-gray-600 pt-1 px-3 text-lg font-ligh rounded-md">
-                    Wallet: {credits} kr
-                  </h2>
+                  <h2 className="text-yellow-50 text-lg font-light">{name}</h2>
                 </div>
               </div>
             )}
           </div>
         )}
-        {isEditing ? (
-          <button
-            onClick={"editButtonHandler"}
-            className="border-b border-red-300 text-red-500"
-          ></button>
-        ) : (
-          <button
-            onClick={editButtonHandler}
-            className="border-b border-yellow-50 text-yellow-50"
-          >
-            Edit profile
-          </button>
-        )}
-
+        <button
+          onClick={isEditing ? () => setIsEditing(false) : editButtonHandler}
+          className="border-b border-yellow-50 text-yellow-50"
+        >
+          {isEditing ? "Cancel" : "Edit profile"}
+        </button>
         <Link
           to={"/addlisting"}
           className="bg-gray-300 mt-5 py-2 px-6 rounded-md"
         >
           Add new
         </Link>
-        <p className="text-yellow-50">My listings: {userListing.length}</p>
+        <p className="text-yellow-50">My listings:</p>
         <div className="flex flex-col items-center gap-2 w-full">
-          {/* USER LISTING */}
           {isLoading ? (
             <Spinner />
           ) : (
@@ -200,56 +254,39 @@ export default function ProfilePage() {
               >
                 <Tabs.Item
                   active
-                  title="Listings"
+                  title="Bookings"
                   icon={""}
                   style="active"
-                  className="flex flex-col bg-red-600 focus:ring-red-500 gap-1 active:bg-yellow-200"
+                  className="flex flex-col bg-red-600 focus:ring-red-500 active:bg-yellow-200"
                 >
-                  {userListing.map(({ id, title, media }) => (
-                    <Link
-                      to={`/singlelisting/${id}/?id=${id}`}
-                      key={id}
-                      className="flex flex-col py-1"
-                    >
-                      {media.length === 0 ? (
-                        <div className=" h-48 bg-slate-100 opacity-30 flex justify-center items-center">
-                          <p>No media found</p>
+                  {profileBookings.length > 0 ? (
+                    profileBookings.map((booking) => {
+                      const venue = venues[booking.id];
+                      return (
+                        <div
+                          key={booking.id}
+                          className="flex flex-col items-center bg-slate-500 my-2 p-3"
+                        >
+                          <h2 className="text-yellow-50 text-lg font-light">
+                            {venue ? venue.name : "Ooops..."}
+                          </h2>
+                          <p className=" text-yellow-50">
+                            From: {formatDate(booking.dateFrom)}
+                          </p>
+                          <p className="text-yellow-50">
+                            To: {formatDate(booking.dateTo)}
+                          </p>
                         </div>
-                      ) : (
-                        <img
-                          src={media[0]}
-                          alt="product image"
-                          className="h-48 bg-slate-100 object-cover"
-                        />
-                      )}
-                      <div className=" bg-slate-400">
-                        <h2 className="text-yellow-50 pt-3 text-lg font-ligh">
-                          {title}
-                        </h2>
-                      </div>
-                    </Link>
-                  ))}
+                      );
+                    })
+                  ) : (
+                    <h2 className="text-yellow-50 text-lg font-light">
+                      No Booking
+                    </h2>
+                  )}
                 </Tabs.Item>
-                <Tabs.Item title="Wins" icon={""}>
-                  {wins.map(({ id, title, media }) => (
-                    <Link
-                      to={`/singlelisting/${id}/?id=${id}`}
-                      key={id}
-                      className="flex flex-col py-1"
-                    >
-                      <img
-                        src={media[0]}
-                        alt="product image"
-                        className="h-48 bg-slate-100 object-cover"
-                      />
-                      <div className=" bg-slate-400">
-                        <h2 className="text-yellow-50 pt-3 text-lg font-ligh">
-                          {title}
-                        </h2>
-                      </div>
-                    </Link>
-                  ))}
-                </Tabs.Item>
+
+                <Tabs.Item title="Venues" icon={""} />
               </Tabs>
             </div>
           )}

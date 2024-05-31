@@ -4,9 +4,10 @@ import HomePage from "./pages/Home";
 import RegisterPage from "./pages/Register";
 import ProfilesPage from "./pages/Profiles";
 import ProfilePage from "./pages/Profile";
-import AddNewListing from "./pages/AddListing";
-import SingleListingPage from "./pages/SingleListing";
+import AddNewVenue from "./pages/AddVenue";
+import SingleVenuePage from "./pages/SingleVenue";
 import PeerProfilePage from "./pages/PeerProfile";
+import BookVenue from "./pages/BookVenue";
 
 import Root from "./App";
 
@@ -55,19 +56,25 @@ const myProfileRoute = new Route({
 const addListingRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/addlisting",
-  component: AddNewListing,
+  component: AddNewVenue,
 });
 
 const singleListingRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: "/singlelisting/$id",
-  component: SingleListingPage,
+  path: "/SingleVenue/$id",
+  component: SingleVenuePage,
 });
 
 const PeerProfileRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: "/PeerProfile/$profileId",
+  path: "/PeerProfile/$name",
   component: PeerProfilePage,
+});
+
+const bookVenueRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/BookVenue/$id",
+  component: BookVenue,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -80,6 +87,7 @@ const routeTree = rootRoute.addChildren([
   addListingRoute,
   singleListingRoute,
   PeerProfileRoute,
+  bookVenueRoute,
 ]);
 
 export const router = new Router({ routeTree });

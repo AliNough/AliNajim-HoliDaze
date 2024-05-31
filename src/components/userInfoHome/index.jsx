@@ -4,46 +4,13 @@ import walletIcon from "../../assets/icons/wallet.png";
 import { Link } from "@tanstack/react-router";
 import { Spinner } from "flowbite-react";
 
-export default function ShowWallet() {
+export default function UserInfoHome() {
   const [profile, setProfile] = useState([]);
   const [wallet, setWallet] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const accessToken = localStorage.getItem("accessToken");
-
-  useEffect(() => {
-    const getWallet = async () => {
-      try {
-        const storedName = localStorage.getItem("user_name");
-        const url = new URL(`${API_URL}/auction/profiles/${storedName}`);
-        url.searchParams.append("_listings", "true");
-
-        const response = await fetch(url.href, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        const allData = await response.json();
-
-        setProfile(allData);
-        const creditValue = allData.credits;
-
-        if (response.status !== 200) {
-          console.log(allData.status);
-        }
-
-        setWallet(creditValue);
-        console.log(creditValue);
-      } catch {
-        setError(error);
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getWallet();
-  }, []);
+  console.log(accessToken);
 
   if (!accessToken) {
     return (
@@ -67,28 +34,4 @@ export default function ShowWallet() {
       </>
     );
   }
-
-  if (isLoading) {
-    return <Spinner className="text-yellow-300 rounded-md" color={"warn"} />;
-  }
-
-  const { credits, name, avatar } = profile;
-
-  return (
-    <div className="flex sticky top-0 z-20 justify-evenly bg-gray-600  w-full py-1">
-      <Link
-        to={"/profile"}
-        className="w-10 h-10 bg-slate-400 rounded-full flex gap-2"
-      >
-        <img src={avatar} alt="profile picture" className="rounded-md" />
-        <p className=" text-yellow-50 pt-3   text-lg font-light hover:tracking-widest hover:text-yellow-300 transition-all hidden sm:block">
-          {name}
-        </p>
-      </Link>
-      <div className=" border-yellow-100 bg-gray-500 rounded-md py-2 px-3 mr-3 flex">
-        <img src={walletIcon} alt="" className="w-6" />
-        <p className="px-5 text-yellow-100"> {credits}</p>
-      </div>
-    </div>
-  );
 }
