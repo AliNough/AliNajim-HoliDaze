@@ -1,8 +1,11 @@
+
 # Report for FED2 Semester Project - HoliDaze
 
-## Introduction
 
-This report details the development process of my semester project, "HoliDaze," an online platform for booking venues. The project includes design decisions, challenges faced, and the solutions implemented to address those challenges. The project was guided by a set of user stories and technical restrictions provided by the client. The primary focus was on functionality due to difficulties with design implementation. The technologies used include React for the JavaScript framework and Tailwind CSS for styling.
+- [Brief](https://fed-vocational-astro-course.vercel.app/en/semester-project-2/brief)
+- [Design](https://www.figma.com/file/7OvbYcHJlwXwIhIi2av17v/BidVista?type=design&node-id=24%3A8136&mode=design&t=fi9ZsqslvjvGWAs5-1)
+- [Production deploy](https://bidvista.netlify.app/)
+
 
 ## Design
 
