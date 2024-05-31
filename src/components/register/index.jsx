@@ -7,16 +7,22 @@ function RegisterForm() {
     name: "",
     email: "",
     password: "",
+    bio: "",
+    avatarUrl: "",
+    avatarAlt: "",
+    bannerUrl: "",
+    bannerAlt: "",
+    venueManager: false,
   });
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -39,13 +45,27 @@ function RegisterForm() {
       return;
     }
 
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      bio: formData.bio || undefined,
+      avatar: formData.avatarUrl
+        ? { url: formData.avatarUrl, alt: formData.avatarAlt || "" }
+        : undefined,
+      banner: formData.bannerUrl
+        ? { url: formData.bannerUrl, alt: formData.bannerAlt || "" }
+        : undefined,
+      venueManager: formData.venueManager,
+    };
+
     try {
-      const response = await fetch(`${API_URL}/auction/auth/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -115,6 +135,47 @@ function RegisterForm() {
               className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
               required
             />
+          </div>
+          <div className="py-3 mb-2">
+            <textarea
+              name="bio"
+              placeholder="Bio - Optional"
+              value={formData.bio}
+              onChange={handleChange}
+              className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+            />
+          </div>
+          <div className="py-3 mb-2">
+            <input
+              type="text"
+              name="avatarUrl"
+              placeholder="Avatar URL - Optional"
+              value={formData.avatarUrl}
+              onChange={handleChange}
+              className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+            />
+          </div>
+          <div className="py-3 mb-2">
+            <input
+              type="text"
+              name="bannerUrl"
+              placeholder="Banner URL - Optional"
+              value={formData.bannerUrl}
+              onChange={handleChange}
+              className="block w-full px-4 py-2 mt-2 text-yellow-50 bg-gray-800 border rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+            />
+          </div>
+          <div className="py-3 mb-2">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                name="venueManager"
+                checked={formData.venueManager}
+                onChange={handleChange}
+                className="text-yellow-500 focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring focus:ring-opacity-40"
+              />
+              <span className="ml-2 text-yellow-50">I am a venue Manager</span>
+            </label>
           </div>
           <div className="flex justify-center mt-6">
             <button

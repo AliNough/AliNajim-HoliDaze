@@ -1,37 +1,38 @@
-## Resources
+
+# Report for FED2 Semester Project - HoliDaze
+
 
 - [Brief](https://fed-vocational-astro-course.vercel.app/en/semester-project-2/brief)
 - [Design](https://www.figma.com/file/7OvbYcHJlwXwIhIi2av17v/BidVista?type=design&node-id=24%3A8136&mode=design&t=fi9ZsqslvjvGWAs5-1)
 - [Production deploy](https://bidvista.netlify.app/)
 
-## Report FED2 Semester Project - Auction
 
-This is my semester project report, where I will be explaining my code and decisions in best way i can. I will be going through my challenges and my solutions to those challanges. The project is design and development of a website for an online auction house which I have named "BisVista".
+## Design
 
-#### Design:
-I started with a figma design for the mobile view, as I would mainly be working in mobile view, this was my only focus. I wanted to go for something easy on the eye and tried to save view space by using icons instead of text based buttons.
-While I must add the design in the actual code ended up to be entirely diffrent, for couple of reasons, I was not able to utilize tailwind properly, I am still finding it difficult. I know I could use regular CSS but tailwind is really good if you need to be quick.
-The design I ended up with is in the least viewable in all screensizes.
+### Initial Design
+The initial design was created using Figma, focusing on mobile view since the primary use case is mobile-based. The goal was to create a visually appealing and user-friendly interface. I aimed to use icons to save space and improve navigation.
 
-#### Home view
-Based on wether or not the user is signed in, the home page will show a bar at the top which sticks at the top of the screen on scroll, if signed inn one can view their credit and if not they wil be asked to either sign in or sign up. 
-In whichever case of these, one can view a listing group of 30, I tried to make this number choosable by user but was unable and no time to implement the feature.
-The is a search feature that was done mainly to go through the 30 list which is already provided. I tried to make a new fetch with every search bu was unable to do so in a way that would not make loading longer.
+### Implementation Challenges
+Despite my initial plans, the final design differed significantly from the Figma design. I faced difficulties in effectively utilizing Tailwind CSS, which impacted the final appearance of the website. While Tailwind CSS offers rapid styling, I struggled to achieve the desired design, resulting in a more functional but less polished interface. Ultimately, the design is at least viewable on all screen sizes.
 
-#### Listing
-Every listing shown contains the end time of a listing as a countdown formatted from the data received from API. As well as formatted created date. All listing tags are shown as individual HTML tags, this does however require the data of tags to be an array to work. Same for images, as a carousel is added.
-Every listing also shows current bid and highest bidder, as well as the seller, with possibility to view both profiles. 
-Depending on if the sidned in use is the one viewing the listing, on has a possibility to edit or delete the listing, although I have not made the code for the them yet.
+## Home View
 
-#### Placing bids
-This is where I was conflicted a bit with how one could chooce the amount to bid. Originally I wanted to have a button to add or detract 10 and 100 but I could not make room for the in mobile view so I did ot get that far. So I ended up with adding and detracting with 1. The functionality of the actual placing bid works however, again the design could be better but it has bugs. It starts at 0 and one has to initiate a value first before pressing the buttons. I dont know how to fix that.
-I also implemented sounds for when one presses 'place bid' button, it differ for when it fails and when it succeeds.
+The home page adjusts its content based on the user's authentication status. If signed in, users see their credit at the top of the screen. If not, they are prompted to sign in or sign up. The page displays a listing of 30 venues. Although I attempted to make this number customizable, I was unable to implement the feature in time. A search function allows users to filter through the displayed venues. Initially, I planned to fetch new data with each search, but this approach increased loading times, so I opted for client-side filtering instead.
 
-#### Profile view:
-In profile view one can view and edit the profile image. As well as other datas such as wallet/credit, listings created and won. I wanted to add tabs at the bottom to show listings and wins but I could not figure out how to style the comonent I used from flowbite.
+## Venue Listing
 
-### Conslution
-This was a fun project and I was impressed the amount of data one had to work with. The document was easy to understand and for the most part everything -functionalitywise - went good. I sadly did not have enough time to add testing, workflow or other sort functions. Due to an unfortunate family issue, I was delayed and started the project later than planned.
+Each venue listing includes a countdown timer showing the end time, formatted from the data received from the API. The creation date is also formatted for readability. Tags and images are displayed individually, with images shown in a carousel format. Each listing displays the current bid, highest bidder, and seller information. Users can view profiles of both the seller and bidders. Depending on the user's status, options to edit or delete listings are available, although the corresponding functionality is not yet implemented.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Placing Bookings
+
+The booking feature was challenging, particularly regarding the input method for selecting bid amounts. Initially, I wanted to include buttons to adjust the bid by increments of 10 and 100, but space constraints in the mobile view led me to simplify this to increments of 1. The current design has bugs, such as starting at 0 and requiring an initial value input before adjustment. Additionally, I implemented sounds to indicate the success or failure of placing a bid.
+
+## Profile View
+
+The profile view allows users to update their profile image and view their wallet/credit, created listings, and wins. I intended to use tabs to separate listings and wins but encountered difficulties styling the component from Flowbite.
+
+## Conclusion
+
+The project was enjoyable and provided valuable experience working with extensive data and API interactions. The documentation was clear, facilitating the implementation of required functionalities. Unfortunately, I could not add testing, workflow enhancements, or other sorting functions due to time constraints and a delayed start caused by personal circumstances.
+
+Despite the design challenges and incomplete features, the core functionality of HoliDaze meets the specified user stories and technical restrictions. The project demonstrates my ability to implement complex features and handle large datasets, even if the final design requires further refinement.
